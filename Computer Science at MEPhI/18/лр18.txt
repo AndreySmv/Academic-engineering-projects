@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct 
+{
+    char brand[15];           // марка компьютера
+    int CPU_freq;             // частота процессора (в МГц)     
+    int disk_space;           // объем дисковой памяти                  
+    int vol_inst_syst_soft;   // объем установленного системного ПО
+    int vol_inst_appl_soft;   // объем установленного прикладного ПО (в Гб)
+} apparats;
+
+void fill_apparats_array(apparats** device, int* quantity) 
+{
+    scanf("%d", quantity);
+    *device = (apparats*)malloc(*quantity * sizeof(apparats)); // Выделение памяти под массив структур
+    if (*device == NULL) 
+    {
+        printf("Ошибка: Не удалось выделить память для массива структур.\n");
+        exit(1);
+    }
+    for (int i = 0; i < *quantity; i++) 
+    {
+        scanf("%s %d %d %d %d", 
+        (*device)[i].brand, 
+        &(*device)[i].CPU_freq, 
+        &(*device)[i].disk_space, 
+        &(*device)[i].vol_inst_syst_soft, 
+        &(*device)[i].vol_inst_appl_soft);
+    }
+}
+
+void print_apparats_array(apparats* device, int quantity) 
+{
+    if (device != NULL) 
+    {
+        for (int i = 0; i < quantity; i++) 
+        {
+            printf("%-15s%5d%5d%5d%5d\n", 
+            device[i].brand, 
+            device[i].CPU_freq, 
+            device[i].disk_space, 
+            device[i].vol_inst_syst_soft, 
+            device[i].vol_inst_appl_soft);
+        }
+    }
+    else 
+    {
+        printf("Ошибка: нулевой указатель.\n");
+    }
+}
+
+void print_search(apparats* device, int quantity, int min_CPU_freq)
+{
+    if (device != NULL) 
+    {
+        int max_disk_space=0;
+        for (int i=0; i<quantity; i++) 
+        {
+            if (device[i].CPU_freq>=min_CPU_freq &&
+            device[i].disk_space-device[i].vol_inst_syst_soft-device[i].vol_inst_appl_soft>max_disk_space)
+            {
+                max_disk_space=device[i].disk_space-device[i].vol_inst_syst_soft-device[i].vol_inst_appl_soft;
+            }
+        }
+        for (int i = 0; i < quantity; i++) 
+        {
+            if (device[i].disk_space-device[i].vol_inst_syst_soft-device[i].vol_inst_appl_soft==max_disk_space) 
+            {
+                printf("%s\n", device[i].brand);
+            }
+        }
+    }
+    else 
+    {
+        printf("Ошибка: нулевой указатель.\n");
+    }
+}
+
+int main() 
+{
+    int quantity;
+    apparats* device;
+    fill_apparats_array(&device, &quantity);
+    print_apparats_array(device, quantity);
+    printf("\n");
+    print_search(device, quantity, 2000);
+    free(device);
+    return 0;
+}

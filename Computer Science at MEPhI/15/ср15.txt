@@ -1,0 +1,316 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+int load_arr_int(int **arr)
+{
+    int size;
+    printf("size array = ");
+    scanf("%d", &size);
+    printf("\n");
+    *arr = malloc(size*sizeof(int));
+    if (*arr==NULL)
+    {
+        printf("\nmemory allocation error.\n");
+        exit(EXIT_FAILURE);
+    }
+    for (int i=0; i<size; i++)
+    {
+        scanf(" %d", &(*arr)[i]);
+    }
+    return size;
+}
+
+int load_random_arr_int(int **arr)
+{
+    int size;
+    printf("size array = ");
+    scanf("%d", &size);
+    printf("\n");
+    *arr=malloc(size*sizeof(int));
+    if (*arr==NULL)
+    {
+        printf("\nmemory allocation error.\n");
+        exit(EXIT_FAILURE);
+    }
+    int R, A=0, B=9;
+    for (int i=0; i<size; i++)
+    {
+        R=A+rand()%(B-A+1);
+        (*arr)[i]=R;
+    }
+    return size;
+}
+
+void copy_arr_int(int **arr, int **arr_cop, int size)
+{
+    *arr_cop=malloc(size*sizeof(int));
+    if (*arr_cop==NULL)
+    {
+        printf("\nmemory allocation error\n.");
+        exit(EXIT_FAILURE);
+    }
+    for(int i=0; i<size; i++)
+    {
+        (*arr_cop)[i]=(*arr)[i];
+    }
+}
+
+void print_arr_int(int **arr, int size)
+{
+    for (int i=1; i<=size; i++)
+    {
+        printf("%3d", i);
+    }
+    printf("\n");
+
+    for (int i=0; i<size; i++)
+    {
+        printf("%3d", (*arr)[i]);
+    }
+}
+
+void flag_print_arr_int(int **arr, int size, int flag)
+{
+    if(flag==1)
+    {
+        printf("\n");
+        for (int i=1; i<=size; i++)
+        {
+            printf("%3d", i);
+        }
+        printf("\n");
+        for (int i=0; i<size; i++)
+        {
+            printf("%3d", (*arr)[i]);
+        }
+        printf("\n");
+    }
+}
+
+void flag_print_arr_int_1(int **arr, int size, int flag)
+{
+    if(flag==1)
+    {
+        printf("\n  treerebuild:\n");
+        for (int i=1; i<=size; i++)
+        {
+            printf("%3d", i);
+        }
+        printf("\n");
+        for (int i=0; i<size; i++)
+        {
+            printf("%3d", (*arr)[i]);
+        }
+        printf("\n");
+    }
+}
+
+void insertion_sort(int **arr, int size, int max_print)
+{
+    printf("  insertion_sort:\n");
+    int i, j, key;
+    int COUNT_ASSIGN=0, COUNT_COMPARE=0, if_print=0;
+    if(size<=max_print)
+    {
+        printf("  if print sort scan 1: ");
+        scanf("%d", &if_print);
+    }
+    for (i=1; i<size; i++)
+    {
+        key=(*arr)[i];
+        COUNT_ASSIGN++;
+        j=i-1;
+        COUNT_COMPARE++;
+        while (j>=0 && (*arr)[j]>key)
+        {
+            (*arr)[j+1]=(*arr)[j];
+            j=j-1;
+            COUNT_ASSIGN++;
+            COUNT_COMPARE++;
+            flag_print_arr_int(&(*arr), size, if_print);
+        }
+        (*arr)[j+1]=key;
+        COUNT_ASSIGN++;
+        flag_print_arr_int(&(*arr), size, if_print);
+    }
+    if(size<=max_print && if_print!=1)
+    {
+        flag_print_arr_int(&(*arr), size, 1);
+    }
+
+    printf("\n  COUNT_COMPARE = %d; COUNT_ASSIGN = %d\n", COUNT_COMPARE, COUNT_ASSIGN);
+}
+
+void insertion_sort_m(int **arr, int size, int max_print)
+{
+    printf("  insertion_sort_m:\n");
+    int i, j, key, index;
+    int COUNT_COMPARE=0, COUNT_ASSIGN=0, if_print=0;
+    if(size<=max_print)
+    {
+        printf("  if print sort scan 1: ");
+        scanf("%d", &if_print);
+    }
+    for (i=1; i<size; i++)
+    {
+        COUNT_ASSIGN+=1;
+        key=(*arr)[i];
+        j=i-1;
+        int low=0;
+        int high=j;
+        while (low<=high)
+        {
+            int mid=low+(high-low)/2;
+            if (key==(*arr)[mid])
+            {
+                COUNT_COMPARE+=1;
+                index=mid+1;
+                break;
+            }
+            else if (key>(*arr)[mid])
+            {
+                COUNT_COMPARE+=1;
+                low=mid+1;
+            }
+            else
+            {
+                high=mid-1;
+            }
+            index=low;
+        }
+        while(j>=index)
+        {
+            COUNT_ASSIGN+=1;
+            (*arr)[j+1]=(*arr)[j];
+            j=j-1;
+            flag_print_arr_int(&(*arr), size, if_print);
+        }
+        COUNT_ASSIGN+=1;
+        (*arr)[j+1]=key;
+        flag_print_arr_int(&(*arr), size, if_print);
+    }
+    if(size<=max_print && if_print!=1)
+    {
+        flag_print_arr_int(&(*arr), size, 1);
+    }
+    printf("\n  COUNT_COMPARE = %d; COUNT_ASSIGN = %d\n", COUNT_COMPARE, COUNT_ASSIGN);
+}
+
+void treerebuild(int **arr, int r, int q, int *arr_count, int if_print, int size, int if_massage)
+{
+    int COUNT_COMPARE=0, COUNT_ASSIGN=0;
+    int v, i, j, flag;
+    i=r;
+    COUNT_ASSIGN+=1;
+    v=(*arr)[i];
+    j=2*i+1;
+    flag=0;
+    while (j<=q && flag==0)
+    {
+        if (j<q)
+        {
+            COUNT_COMPARE+=1;
+            if ((*arr)[j]<(*arr)[j+1]) // Compare with the larger element
+            {
+                j++;
+            }
+        }
+        COUNT_COMPARE+=1;
+        if (v>=(*arr)[j])
+        {
+
+            flag=1; // Element is in its correct position
+        }
+        else
+        {
+            COUNT_ASSIGN+=1;
+            (*arr)[i]=(*arr)[j]; // Swap elements
+            i=j;
+            j=2*i+1; // Move down the heap
+            flag_print_arr_int_1(&(*arr), size, if_print);
+        }
+    }
+    COUNT_ASSIGN+=1;
+    (*arr)[i]=v;
+    arr_count[0]+=COUNT_COMPARE;
+    arr_count[1]+=COUNT_ASSIGN;
+    if(if_massage==1)
+    {
+        printf("\n final");
+    }
+    flag_print_arr_int_1(&(*arr), size, if_print);
+}
+
+void treesort(int **arr, int size, int *arr_count, int max_print)
+{
+    printf("  treesort:\n");
+    int k, i;
+    int COUNT_COMPARE=0, COUNT_ASSIGN=0, if_print=0, if_massage=0;
+    if(size<=max_print)
+    {
+        printf("  if print sort scan 1: ");
+        scanf("%d", &if_print);
+    }
+    k=size/2;
+    for (i=k-1; i>=0; i--)
+    {
+        if(i==0 && size<=max_print)
+        {
+            printf("\n  final");
+        }
+        treerebuild(arr, i, size-1, arr_count, if_print, size, 0);
+    }
+    if(if_print!=1 && size<=max_print)
+    {
+        printf("\n  pyramyd:\n");
+        print_arr_int(&(*arr), size);
+        printf("\n");
+    }
+    if(if_print==1)
+        {
+            if_massage=1;
+        }
+    int temp;
+    for (i=size-1; i>=1; i--)
+    {
+        temp=(*arr)[0];
+        (*arr)[0]=(*arr)[i];
+        (*arr)[i]=temp;
+        flag_print_arr_int(&(*arr), size, if_print);
+        COUNT_ASSIGN+=3;
+        treerebuild(arr, 0, i-1, arr_count, if_print, size, if_massage);
+    }
+    COUNT_COMPARE+=arr_count[0];
+    COUNT_ASSIGN+=arr_count[1];
+    if(size<=max_print && if_print==0)
+    {
+        flag_print_arr_int(&(*arr), size, 1);
+        printf("\n");
+    }
+    printf("\n  COUNT_COMPARE = %d; COUNT_ASSIGN = %d\n", COUNT_COMPARE, COUNT_ASSIGN);
+}
+
+int main()
+{
+    int size, *arr_1, *arr_2, *arr_3, arr_count[2], max_print=30;
+    arr_count[0]=0;
+    arr_count[1]=0;
+    size=load_random_arr_int(&arr_1);
+    copy_arr_int(&arr_1, &arr_2, size);
+    copy_arr_int(&arr_1, &arr_3, size);
+    if(size<=max_print)
+    {
+        printf("  array:\n");
+        print_arr_int(&arr_1, size);
+        printf("\n\n");
+    }
+    printf("\n");
+    insertion_sort(&arr_1, size, max_print);
+    printf("\n\n");
+    insertion_sort_m(&arr_2, size, max_print);
+    printf("\n\n");
+    treesort(&arr_3, size, arr_count, max_print);
+    printf("\n\n");
+    return 0;
+}

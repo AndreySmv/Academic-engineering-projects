@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int load_arr_int(int **arr) 
+{
+    int size;
+    scanf("%d", &size);
+
+    *arr = malloc(size * sizeof(int));
+    if (*arr == NULL) 
+    {
+        printf("\n\nmemory allocation error\n.");
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i = 0; i < size; i++) 
+    {
+        scanf(" %d", &(*arr)[i]);
+    }
+
+    return size;
+}
+
+void print_arr_int(int **arr, int size) 
+{
+    for (int i = 1; i <= size; i++) 
+    {
+        printf("%3d", i);
+    }
+    printf("\n");
+
+    for (int i = 0; i < size; i++) 
+    {
+        printf("%3d", (*arr)[i]);
+    }
+}
+
+void TreeRebuild(int **arr, int r, int q) 
+{
+    int v, i, j, flag;
+    i = r;
+    v = (*arr)[i];
+    j = 2 * i + 1;
+    flag = 0;
+
+    while (j <= q && flag == 0) 
+    {
+        if (j < q)
+            if ((*arr)[j] < (*arr)[j + 1]) // Compare with the larger element
+                j++;
+        if (v >= (*arr)[j])
+            flag = 1; // Element is in its correct position
+        else 
+        {
+            (*arr)[i] = (*arr)[j]; // Swap elements
+            i = j;
+            j = 2 * i + 1; // Move down the heap
+        }
+    }
+    (*arr)[i] = v;
+}
+
+void TreeSort(int **arr, int size) 
+{
+    int k, i;
+    k = size / 2; 
+    
+    for (i = k - 1; i >= 0; i--) 
+    {
+        TreeRebuild(arr, i, size - 1);
+    } 
+    printf("\n  build pyramid\n");
+    print_arr_int(arr, size);
+    printf("\n");
+
+    int temp;
+    for (i = size - 1; i >= 1; i--) 
+    {
+        temp = (*arr)[0];
+        (*arr)[0] = (*arr)[i];
+        (*arr)[i] = temp;
+        TreeRebuild(arr, 0, i - 1);
+        printf("\n  rebuild pyramid\n");
+        print_arr_int(arr, size);
+        printf("\n");
+    }
+}
+
+int main() 
+{
+    int size, *arr;
+    size = load_arr_int(&arr);
+    TreeSort(&arr, size);
+    return 0;
+}

@@ -1,0 +1,121 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int load_int(int **arr, int **arr_c)
+{
+    int size;
+    scanf("%d", &size);
+    *arr=malloc(size*sizeof(int));
+    *arr_c=malloc(size*sizeof(int));
+    if (*arr==NULL || *arr_c==NULL)
+    {
+        printf("\n\nmemory allocation error\n.");
+        exit(EXIT_FAILURE);
+    }
+    int r;
+    for (int i=0; i<size; i++)
+    {
+        scanf(" %d", &(*arr)[i]);
+        (*arr_c)[i]=(*arr)[i];
+    }
+    return size;
+}
+
+void print_mas(int **arr, int size)
+{
+    for (int i=1; i<=size; i++)
+    {
+        printf("%3d", i);
+    }
+    printf("\n");
+    for (int i=0; i<size; i++)
+    {
+        printf("%3d", (*arr)[i]);
+    }
+}
+
+void sort(int **arr, int size)
+{
+    print_mas(&(*arr), size);
+    printf("\n\n");
+    int COUNT_COMPARE=0, COUNT_ASSIGN=0;
+    int i, j, key, index;
+    for (i=1; i<size; i++)
+    {
+        COUNT_ASSIGN+=1;
+        key=(*arr)[i];
+        j=i-1;
+        int low=0;
+        int high=j;
+        while (low<=high)
+        {
+            int mid=low+(high-low)/2;
+            if (key==(*arr)[mid])
+            {
+                COUNT_COMPARE+=1;
+                index=mid+1;
+                break;
+            }
+            else if (key>(*arr)[mid])
+            {
+                COUNT_COMPARE+=1;
+                low=mid+1;
+            }
+            else
+            {
+                high=mid-1;
+            }
+            index=low;
+        }
+        while(j>=index)
+        {
+            COUNT_ASSIGN+=1;
+            (*arr)[j+1]=(*arr)[j];
+            j=j-1;
+        }
+        COUNT_ASSIGN+=1;
+        (*arr)[j+1]=key;
+        if(i!=size-1)
+        {
+            print_mas(&(*arr), size);
+            printf("\n\n");
+        }
+        if(i==size-1)
+        {
+            print_mas(&(*arr), size);
+            printf("\n  COUNT_COMPARE = %d; COUNT_ASSIGN = %d\n", COUNT_COMPARE, COUNT_ASSIGN);
+        }
+    }
+}
+
+void insertionsort(int **arr, int size)
+{
+    int COUNT_COMPARE=0, COUNT_ASSIGN=0;
+    int i, j, key;
+    for (i = 1; i < size; i++)
+    {
+        COUNT_ASSIGN++;
+        key = (*arr)[i];
+        j = i - 1;
+        while (j >= 0 && (*arr)[j] > key)
+        {
+            COUNT_COMPARE++;
+            COUNT_ASSIGN++;
+            (*arr)[j + 1] = (*arr)[j];
+            j = j - 1;
+        }
+        COUNT_COMPARE++;
+        COUNT_ASSIGN++;
+        (*arr)[j + 1] = key;
+    }
+        printf("\n  COUNT_COMPARE = %d; COUNT_ASSIGN = %d\n", COUNT_COMPARE, COUNT_ASSIGN);
+}
+
+int main()
+{
+    int size, *arr, *arr_c;
+    size=load_int(&arr, &arr_c);
+    sort(&arr, size);
+    insertionsort(&arr_c, size);
+    return 0;
+}

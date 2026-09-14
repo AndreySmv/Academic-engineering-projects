@@ -1,0 +1,35 @@
+#include <stdio.h>
+int main() 
+{
+    int N=300, i=-1, count=0, count1=0, flag=0;
+    unsigned char c;
+    char m[N], m1[N];
+    m[0]=NULL;
+    m1[0]=NULL;
+    c=getchar();
+    while(c!='\n')
+    {
+        if(isspace(c)==0)
+        {
+            printf("%c", c);
+            count1++;
+            m1[count1-1]=c;
+            c=getchar();
+            if(isspace(c))
+            {
+                printf("\n");
+                if(count<=count1) 
+                {
+                    count=count1;
+                    m[0]=NULL;
+                    strcpy(m,m1);
+                }
+                m1[0]=NULL; count1=0;
+            }
+        }
+        else if(isspace(c)) {c=getchar();}
+    }
+    printf("\n");
+    puts(m);
+    return 0; 
+}

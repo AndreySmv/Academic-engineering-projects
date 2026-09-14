@@ -1,0 +1,288 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void print_matrix(int **matrix, int rows, int cols)
+{
+    for (int i=0; i<rows; i++)
+    {
+        for (int j=0; j<cols; j++)
+        {
+            printf("%6d", matrix[i][j]);
+        }
+        if(i!=rows-1)
+        {
+            printf("\n");
+        }
+    }
+}
+
+void copy_matrix(int ***matrix, int ***matrix_cop, int *rows, int *cols, int if_print)
+{
+    *matrix_cop=(int**)malloc(*rows*sizeof(int*));
+    for (int i=0; i<*rows; i++)
+    {
+        (*matrix_cop)[i] = (int*)malloc(*cols*sizeof(int));
+    }
+    for (int i=0; i <*rows; i++)
+    {
+        for (int j = 0; j<*cols; j++)
+        {
+            (*matrix_cop)[i][j]=(*matrix)[i][j];
+        }
+    }
+    if(if_print==1)
+    {
+        print_matrix(*matrix_cop, *rows, *cols);
+    }
+}
+
+void create_int_matrix(int **arr, int ***matrix, int *rows, int *cols, int if_print)
+{
+    scanf("%d %d", rows, cols);
+    int count=-1;
+    *matrix=(int**)malloc(*rows*sizeof(int*));
+    for (int i=0; i<*rows; i++)
+    {
+        (*matrix)[i]=(int*)malloc(*cols*sizeof(int));
+    }
+    *arr=malloc(((*rows)*(*cols))*sizeof(int));
+    for (int i=0; i<(*rows)*(*cols); i++)
+    {
+        scanf(" %d", &(*arr)[i]);
+    }
+    for (int i=0; i<*rows; i++)
+    {
+        for (int j=0; j<*cols; j++)
+        {
+            count++;
+            (*matrix)[i][j]=(*arr)[count];
+        }
+    }
+    if(if_print==1)
+    {
+        //printf("\n");
+        print_matrix(*matrix, *rows, *cols);
+    }
+}
+
+void create_int_random_matrix(int ***matrix, int *rows, int *cols, int if_print)
+{
+    int R, A, B, count=-1;
+    scanf("%d %d", rows, cols);
+    scanf("%d %d", &A, &B);
+    *matrix=(int**)malloc(*rows*sizeof(int*));
+    for (int i=0; i<*rows; i++)
+    {
+        (*matrix)[i]=(int *)malloc(*cols*sizeof(int));
+    }
+    for (int i=0; i<*rows; i++)
+    {
+        for (int j=0; j<*cols; j++)
+        {
+            R=A+rand()%(B-A+1);
+            count++;
+            (*matrix)[i][j]=R;
+        }
+    }
+    if(if_print==1)
+    {
+        print_matrix(*matrix, *rows, *cols);
+    }
+}
+
+void transposition_matrix(int ***matrix, int *rows, int *cols, int if_print)
+{
+    int flag=-1, t;
+    for(int i=0; i<*rows-1; i++)
+    {
+        flag++;
+        for(int j=i+1; j<*cols; j++)
+        {
+            t=(*matrix)[i][j];
+            (*matrix)[i][j]=(*matrix)[j][i];
+            (*matrix)[j][i]=t;
+        }
+    }
+    if(if_print==1)
+    {
+        print_matrix(*matrix, *rows, *cols);
+    }
+}
+
+void summ_matrix(int ***matrix_1, int ***matrix_2, int ***matrix, int *rows, int *cols, int if_print)
+{
+    *matrix=(int**)malloc(*rows*sizeof(int*));
+    for (int i=0; i<*rows; i++)
+    {
+        (*matrix)[i]=(int *)malloc(*cols*sizeof(int));
+    }
+    for (int i=0; i<*rows; i++)
+    {
+        for (int j=0; j<*cols; j++)
+        {
+            (*matrix)[i][j]=(*matrix_1)[i][j]+(*matrix_2)[i][j];
+        }
+    }
+    if(if_print==1)
+    {
+        print_matrix(*matrix, *rows, *cols);
+    }
+}
+
+void product_matrix(int ***matrix_1, int ***matrix_2, int ***matrix, int *rows_1, int *cols_1, int *rows_2, int *cols_2, int if_print)
+{
+    int summ;
+    if(*cols_1==*rows_2)
+    {
+        *matrix=(int**)malloc(*rows_1*sizeof(int*));
+        for (int i=0; i<*rows_1; i++)
+        {
+            (*matrix)[i]=(int *)malloc(*cols_2*sizeof(int));
+        }
+
+
+        for(int i=0; i<*rows_1; i++)
+        {
+            for(int j=0; j<*cols_2; j++)
+            {
+                summ=0;
+                for(int k=0; k<*rows_2; k++)
+                {
+                    summ=summ+(*matrix_1)[i][k] * (*matrix_2)[k][j];
+                }
+                (*matrix)[i][j]=summ;
+            }
+        }
+        if(if_print==1)
+        {
+            print_matrix(*matrix, *rows_1, *cols_2);
+        }
+    }
+}
+
+void raise_matrix_power(int ***matrix, int ***matrix_r, int *rows, int *cols, int power, int if_print) {
+    int summ;
+    if (*rows == *cols) 
+    {
+        // Выделение памяти для матрицы результатов
+        *matrix_r = (int **)malloc(*rows * sizeof(int *));
+        for (int i = 0; i < *rows; i++)
+        {
+            (*matrix_r)[i] = (int *)malloc(*cols * sizeof(int));
+        }
+        // Инициализация матрицы результатов как копии исходной
+        for (int i = 0; i < *rows; i++)
+        {
+            for (int j = 0; j < *cols; j++)
+            {
+                (*matrix_r)[i][j] = (*matrix)[i][j];
+            }
+        }
+        // Выполнение возведения в степень
+        for (int f = 1; f < power; f++)
+        {
+            // Умножение матрицы на саму себя power раз
+            int **temp_result = (int **)malloc(*rows * sizeof(int *));
+            for (int i = 0; i < *rows; i++)
+            {
+                temp_result[i] = (int *)malloc(*cols * sizeof(int));
+            }
+
+            for (int i = 0; i < *rows; i++)
+            {
+                for (int j = 0; j < *cols; j++)
+                {
+                    summ = 0;
+                    for (int k = 0; k < *rows; k++)
+                    {
+                        summ += (*matrix)[i][k] * (*matrix_r)[k][j];
+                    }
+                    temp_result[i][j] = summ;
+                }
+            }
+            // Обновление матрицы результата
+            for (int i = 0; i < *rows; i++)
+            {
+                for (int j = 0; j < *cols; j++)
+                {
+                    (*matrix_r)[i][j] = temp_result[i][j];
+                }
+            }
+            // Освобождение памяти временной матрицы
+            for (int i = 0; i < *rows; i++)
+            {
+                free(temp_result[i]);
+            }
+            free(temp_result);
+        }
+        if (if_print == 1)
+        {
+            print_matrix(*matrix_r, *rows, *cols);
+        }
+        // Обновление оригинальной матрицы, если это необходимо
+        if (power>1)
+        {
+            for (int i = 0; i < *rows; i++)
+            {
+                for (int j = 0; j < *cols; j++)
+                {
+                    (*matrix)[i][j] = (*matrix_r)[i][j];
+                }
+            }
+        }
+    }
+}
+
+void save_to_file(int ***matrix, int *rows, int *cols)
+{
+    FILE *file=fopen("matrix.txt", "w");
+	for (int i=0; i<*rows; i++)
+    {
+        for (int j=0; j<*cols; j++)
+        {
+            if(j!=*cols-1)
+            {
+                fprintf(file, "%6d", (*matrix)[i][j]);
+            }
+            if(j==*cols-1)
+            {
+                fprintf(file, "%6d", (*matrix)[i][j]);
+            }
+        }
+        if(i!=*rows-1)
+        fprintf(file, "\n");
+    }
+	fclose(file);
+}
+
+void read_from_file()
+{
+    FILE *file=fopen("matrix.txt", "r");
+    char ch;
+    while((ch=getc(file))!=EOF)
+    {
+        putchar(ch);
+    }
+    fclose(file);
+}
+
+int main()
+{
+    int rows, cols;
+    int **matrix, *arr, **matrix_1, **matrix_2, **matrix_3, **matrix_4, **matrix_5, **matrix_6;
+    int **matrix_r1, **matrix_r2, **matrix_r3, **matrix_r4, **matrix_r5, **matrix_r6, **matrix_r7;
+    int rows_1=0, cols_1=0, rows_2=0, cols_2=0, rows_3=0, cols_3=0, rows_4=0, cols_4=0, rows_5=0, cols_5=0, rows_6=0, cols_6=0;
+
+    create_int_matrix(&arr, &matrix_1, &rows_1, &cols_1, 1);
+    //create_int_random_matrix(&matrix_1, &rows_1, &cols_1, 1);
+    copy_matrix(&matrix_1, &matrix_2, &rows_1, &rows_1, 0);
+    transposition_matrix(&matrix_1, &rows_1, &cols_1, 0);
+    product_matrix(&matrix_1, &matrix_2, &matrix_r1, &rows_1, &cols_1, &rows_1, &cols_1, 0);
+    printf("\n\n");
+    raise_matrix_power(&matrix_r1, &matrix_r2, &rows_1, &cols_1, 2, 1);
+    printf("\n");
+    //save_to_file(&matrix_1, &rows_1, &cols_1);
+    //read_from_file();
+    return 0;
+}

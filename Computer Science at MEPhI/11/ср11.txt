@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+void f1(int mas[], int l)
+{
+    for(int i=0; i<l; i++)
+    {mas[i]=0;}
+}
+void f2(int mas[], int l)
+{
+    int a;
+    for(int i=0; i<l; i++)
+    {scanf("%d", &mas[i]);}
+}
+void f3(int mas[], int l, int A, int B)
+{
+    for(int i=0; i<l; i++)
+    {mas[i]=A+rand()%(B-A+1);}
+}
+void f4(int mas[], int l)
+{
+    for(int i=0; i<l; i++)
+    {printf("%d", mas[i]);}
+}
+int f5(int mas[], int l)
+{
+    int min=mas[0];
+    for(int i=0; i<l; i++)
+    {
+    if (mas[i]<=min) {min=mas[i];}
+    }
+    return min;
+}
+void F(int masx[], int masy[],int mash[], int lx, int l, int A)
+{
+    int j;
+    for(int i=0; i<lx; i++)
+    {
+        j=masx[i]-A;
+        if (masy[j]==0)
+        {
+            masy[j]+=1;
+            mash[j]+=1;
+        }
+    }
+    f1(masy, l);
+}
+int l=7, mas[7];
+
+int main()
+{
+    int l1=8, l2=7, l3=6, A=12, B=18 ,mas1[l1], mas2[l2], mas3[l3], mash[l];
+    f2(mas1, l1);
+    f2(mas2, l2);
+    f2(mas3, l3);
+    printf("\n");
+    printf("%d %d %d\n", f5(mas1, l1), f5(mas2, l2), f5(mas3, l3));
+    f1(mas, l);
+    f1(mash, l);
+    F(mas1, mas, mash, l1, l, A);           
+    F(mas2, mas, mash, l2, l, A);           
+    F(mas3, mas, mash, l3, l, A);
+    int count=0;
+    for(int i=0; i<l; i++)
+    {
+        if(mash[i]==3)
+        {
+            if(count==0)
+            {
+                printf("%d", A+i);
+                count++;
+            }
+            else
+            {
+                printf(" %d", A+i);
+            }
+        }
+    }
+    printf("\n");
+    return 0;
+}

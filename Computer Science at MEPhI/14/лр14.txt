@@ -1,0 +1,83 @@
+#include <stdio.h>
+//#include <stdlib.h>
+//#include <time.h>
+
+void zapolneniye_mas (int, int[]);
+void vivod_mas (int, int[]);
+//void random_mas (int, int[]);
+void sortirovka (int, int, int[]);
+
+int main (void)
+{
+    //srand (time(NULL));
+    int n;
+    scanf ("%d", &n);
+    //n = 1 + rand() % 10;
+    int mas[n];
+    
+    zapolneniye_mas (n, mas);
+    //random_mas (n, mas);
+    vivod_mas (n, mas);
+    printf ("\n");
+    for (int i = 0; i <= n-2; i++)
+    {
+        sortirovka (n, i, mas);
+        vivod_mas (n, mas);
+        if (i != n-2)
+            printf ("\n");
+    }
+    
+    return 0;
+}
+
+void zapolneniye_mas (int n, int mas[])
+{
+    for (int i = 0; i < n; i++)
+        scanf ("%d", &mas[i]);
+}
+
+void vivod_mas (int n, int mas[])
+{
+    for (int i = 1; i <= n; i++)
+        printf ("%3d", i);
+    
+    printf ("\n");
+    
+    for (int i = 0; i < n; i++)
+        printf ("%3d", mas[i]);
+    
+    printf ("\n");
+}
+
+/*void random_mas (int n, int mas[])
+{
+    for (int i = 0; i < n; i++)
+        mas[i] = 1 + rand() % 100;
+}*/
+
+void sortirovka (int n, int i, int mas[])
+{
+    int value, k, dop;
+    if (mas[i] < mas[i+1]) //
+    {
+        value = mas[i+1];
+        for (int j = i+1; j < n-1; j++)
+        {
+            mas[j] = mas[j+1];
+        }
+        for (int j = 0; j < n; j++)
+        {
+            if (value > mas[j]) //
+            {
+                k = j;
+                break;
+            }
+        }
+        for (int j = k; j < n; j++)
+        {
+            dop = mas[j];
+            mas[j] = value;
+            value = dop;
+        }
+    }
+}

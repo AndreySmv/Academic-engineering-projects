@@ -1,0 +1,113 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int load_arr_int(int **arr) 
+{
+    int size;
+    scanf("%d", &size);
+    *arr = malloc(size * sizeof(int));
+    if (*arr == NULL) 
+    {
+        exit(EXIT_FAILURE);
+    }
+    for (int i=0; i<size; i++) 
+    {
+        scanf("%d", &(*arr)[i]);
+    }
+    return size;
+}
+
+void print_arr_adr_int(int **arr_ad, int size) 
+{
+    for (int i=1; i<=size; i++) 
+    {
+        printf("%3d", i);    
+    }
+    printf("\n");
+    for (int i = 0; i<size; i++) 
+    {
+        printf("%3d", *(*(arr_ad+i)));    
+    }
+    printf("\n");
+}
+
+void print_arr_int(int **arr, int size)
+{
+    for (int i=1; i<=size; i++) 
+    {
+        printf("%3d", i);    
+    }
+    printf("\n");
+    for (int i=0; i<size; i++)
+    {
+        printf("%3d", (*arr)[i]);
+    }
+    printf("\n");
+}
+
+void merge_sort(int **arr_1, int **arr_2, int size_1, int size_2, int ***arr_ad)
+{
+    int i=0, j=0, k=0;
+    
+    *arr_ad=malloc((size_1+size_2)*sizeof(int*));
+    if (*arr_ad==NULL) 
+    {
+        exit(EXIT_FAILURE);
+    }
+    
+    while (i<size_1 && j<size_2) 
+    {
+        if ((*arr_1)[i]<(*arr_2)[j]) 
+        {
+            (*arr_ad)[k]=&(*arr_1)[i];
+            i++;
+        } 
+        else 
+        {
+            (*arr_ad)[k]=&(*arr_2)[j];
+            j++;
+        }
+        k++;
+    }
+    while (i<size_1) 
+    {
+        (*arr_ad)[k]=&(*arr_1)[i];
+        i++;
+        k++;
+    }
+    while (j<size_2) 
+    {
+        (*arr_ad)[k]=&(*arr_2)[j];
+        j++;
+        k++;
+    }
+}
+
+/*
+Функция merge_sorted_arrays: Эта функция принимает два отсортированных массива arr1 и arr2, их размеры size1 и size2, а также массив merged_array, в который будут записаны объединенные и отсортированные элементы.
+
+Переменные i, j и k используются для отслеживания текущих индексов в массивах arr1, arr2 и merged_array соответственно.
+
+В цикле while происходит сравнение элементов из обоих массивов. Минимальный элемент добавляется в merged_array, и соответствующий счетчик i, j или k увеличивается на 1 в зависимости от того, из какого массива был взят элемент.
+
+После того как один из массивов исчерпан, происходит добавление оставшихся элементов из другого массива в merged_array с помощью двух отдельных циклов while.*/
+
+
+int main() 
+{
+    int *arr_1, *arr_2, **arr_ad, size_1, size_2;
+    size_1=load_arr_int(&arr_1);
+    size_2=load_arr_int(&arr_2);
+    merge_sort(&arr_1, &arr_2, size_1, size_2, &arr_ad);
+    //printf("\n");
+    print_arr_int(&arr_1, size_1);
+    printf("\n");
+    print_arr_int(&arr_2, size_2);
+    printf("\n");
+    print_arr_adr_int(arr_ad, size_1+size_2);
+    free(arr_1);
+    free(arr_2);
+    free(arr_ad);
+    printf("\n");
+    return 0;
+}

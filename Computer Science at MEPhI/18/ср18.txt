@@ -1,0 +1,457 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
+#define W 20
+#define MAX_STRING_LENGTH 100
+
+typedef struct
+{
+    char surname[W];
+    char name[W];
+    char city[W];
+    char street[W];
+    int house_number;
+    int apartment_number;
+    char section[W];
+    int score;
+} STRUCTURE;
+
+void fill_struct(STRUCTURE** member_card, int *quantity)
+{
+    scanf("%d", quantity);
+    *member_card = (STRUCTURE*)malloc(*quantity * sizeof(STRUCTURE)); // Allocate memory for the array of structures
+    if (*member_card == NULL)
+    {
+        printf("Error: Unable to allocate memory for the array of structures.\n");
+        exit(1);
+    }
+    for (int i = 0; i < *quantity; i++)
+    {
+        //printf("№%d: ", i + 1);
+        scanf("%s %s %s %s %d %d %s %d",
+            (*member_card)[i].surname,
+            (*member_card)[i].name,
+            (*member_card)[i].city,
+            (*member_card)[i].street,
+            &(*member_card)[i].house_number,
+            &(*member_card)[i].apartment_number,
+            (*member_card)[i].section,
+            &(*member_card)[i].score);
+    }
+    for (int i=0; i<*quantity-1; i++)
+    {
+        for (int j=0; j<*quantity-i-1; j++)
+        {
+            if ((*member_card)[j].score<(*member_card)[j+1].score)
+            {
+                // Обмен структурами
+                STRUCTURE temp=(*member_card)[j];
+                (*member_card)[j]=(*member_card)[j + 1];
+                (*member_card)[j + 1] = temp;
+            }
+        }
+    }
+}
+
+void fill_struct_file(STRUCTURE** member_card, int *quantity)
+{
+    int i, position, flag, indx, j;
+    char buf[MAX_STRING_LENGTH], res[MAX_STRING_LENGTH];
+    FILE *file;
+    file = fopen("777.txt", "r");
+
+    if (file == NULL) {
+        printf("Error: Unable to open file for reading.\n");
+        exit(1);
+    }
+
+    *quantity = 0;
+
+    while (fgets(buf, sizeof(buf), file) != NULL) {
+        (*quantity)++;
+    }
+
+    fseek(file, 0, SEEK_SET); // Сбросить указатель файла в начало
+
+    *member_card = (STRUCTURE*)malloc((*quantity) * sizeof(STRUCTURE));
+
+    if (*member_card == NULL) {
+        printf("Error: Unable to allocate memory for the array of structures.\n");
+        exit(1);
+    }
+
+    indx = 0;
+
+    while (fgets(buf, sizeof(buf), file) != NULL) {
+        i = 0;
+        flag = 0;
+        position = 0;
+        j = 0;
+        memset(res, 0, sizeof(res));
+
+        while (buf[i] != '\0') {
+            if ((isspace(buf[i]) || buf[i] == '\n') && flag == 1) {
+                position++;
+                if (position == 1) {
+                    strcpy((*member_card)[indx].surname, res);
+                } else if (position == 2) {
+                    strcpy((*member_card)[indx].name, res);
+                } else if (position == 3) {
+                    strcpy((*member_card)[indx].city, res);
+                } else if (position == 4) {
+                    strcpy((*member_card)[indx].street, res);
+                } else if (position == 5) {
+                    (*member_card)[indx].house_number = atoi(res);
+                } else if (position == 6) {
+                    (*member_card)[indx].apartment_number = atoi(res);
+                } else if (position == 7) {
+                    strcpy((*member_card)[indx].section, res);
+                } else if (position == 8) {
+                    (*member_card)[indx].score = atoi(res);
+                }
+                flag = 0;
+                memset(res, 0, sizeof(res));
+                j = 0; // Сбросить индекс j для следующего слова
+            } else if (!isspace(buf[i]) && flag == 0) {
+                flag = 1;
+            }
+            if (!isspace(buf[i]) && buf[i] != '\n' && flag == 1) {
+                res[j] = buf[i];
+                j++;
+            }
+            i++;
+        }
+
+
+        if (position < 8) {
+            if(position==0) {strcpy((*member_card)[indx].surname, res);}
+            else if(position==1) {strcpy((*member_card)[indx].name, res);}
+            else if(position==2) {strcpy((*member_card)[indx].city, res);}
+            else if(position==3) {strcpy((*member_card)[indx].street, res);}
+            else if(position==4) {(*member_card)[indx].house_number=atoi(res);}
+            else if(position==5) {(*member_card)[indx].apartment_number=atoi(res);}
+            else if(position==6) {strcpy((*member_card)[indx].section, res);}
+            else if(position==7) {(*member_card)[indx].score=atoi(res);} }
+
+
+        indx++;
+    }
+
+    fclose(file);
+
+    // Сортировка массива member_card в порядке убывания на основе балла
+    for (i = 0; i < *quantity - 1; i++) {
+        for (j = 0; j < *quantity - i - 1; j++) {
+            if ((*member_card)[j].score < (*member_card)[j + 1].score) {
+                // Обмен структурами
+                STRUCTURE temp = (*member_card)[j];
+                (*member_card)[j] = (*member_card)[j + 1];
+                (*member_card)[j + 1] = temp;
+            }
+        }
+    }
+}
+
+
+
+void print_participants_array(STRUCTURE* member_card, int *quantity)
+{
+    if (member_card != NULL)
+    {
+        printf("%-10s %-10s %-10s %-10s %-10s %-10s %-10s %-10s\n",
+            "SURNAME:", "NAME:", "CITY:", "STREET:", "HOUSE:", "APARTMENT:", "SECTION:", "SCORE:");
+        for (int i = 0; i < *quantity; i++)
+        {
+            printf("%-10s %-10s %-10s %-10s %-10d %-10d %-10s %-10d\n",
+                member_card[i].surname,
+                member_card[i].name,
+                member_card[i].city,
+                member_card[i].street,
+                member_card[i].house_number,
+                member_card[i].apartment_number,
+                member_card[i].section,
+                member_card[i].score);
+        }
+    }
+    else
+    {
+        printf("Error: Null pointer.n");
+    }
+}
+
+void create_unique_sections_array(STRUCTURE* member_card, int *quantity, char ***matrix, int *unique_count)
+{
+    char **sections=(char**)malloc(*quantity*sizeof(char*));
+    if (sections == NULL) {
+        printf("Error: Unable to allocate memory for the sections array.\n");
+        exit(1);
+    }
+
+    *unique_count=0;
+    for (int i = 0; i < *quantity; i++)
+    {
+        int flag_unique = 1;
+        for (int j = 0; j < *unique_count; j++)
+        {
+            if (strcmp(member_card[i].section, sections[j]) == 0)
+            {
+                flag_unique = 0;
+                break;
+            }
+        }
+        if (flag_unique)
+        {
+            sections[*unique_count] = (char*)malloc((strlen(member_card[i].section) + 1) * sizeof(char));
+            if (sections[*unique_count] == NULL)
+            {
+                printf("Error: Unable to allocate memory for section string.\n");
+                exit(1);
+            }
+            strcpy(sections[*unique_count], member_card[i].section);
+            (*unique_count)++;
+        }
+    }
+    *matrix = (char**)malloc(*unique_count * sizeof(char*));
+    if (*matrix == NULL)
+    {
+        printf("Error: Unable to allocate memory for the matrix.\n");
+        exit(1);
+    }
+    for (int i=0; i<*unique_count; i++)
+    {
+        (*matrix)[i]=(char*)malloc((strlen(sections[i])+1)*sizeof(char));
+        if ((*matrix)[i]==NULL)
+        {
+            printf("Error: Unable to allocate memory for section string.\n");
+            exit(1);
+        }
+        strcpy((*matrix)[i], sections[i]);
+    }
+    for (int i = 0; i < *unique_count; i++)
+    {
+        free(sections[i]);
+    }
+    free(sections);
+}
+
+
+void calculate_pass_score(STRUCTURE* member_card, int *quantity, char **matrix, int **pass_score, int numb_fin, int *unique_count)
+{
+    int count, h, flag, temp;
+    int *pass_score_prom;
+    *pass_score = (int*)malloc(*unique_count * sizeof(int));
+    if (*pass_score == NULL)
+    {
+        printf("\n\nMemory allocation error.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i=0; i <*unique_count; i++)
+    {
+        pass_score_prom = malloc(*quantity * sizeof(int));
+        if (pass_score_prom == NULL)
+        {
+            printf("\n\nMemory allocation error.\n");
+            exit(EXIT_FAILURE);
+        }
+
+        count = 0;
+        h = 0;
+        for (int j = 0; j < *quantity; j++)
+        {
+            flag = 0;
+            if (strcmp(member_card[j].section, matrix[i])==0)
+            {
+                for (int r=0; r<count; r++)
+                {
+                    if (member_card[j].score==pass_score_prom[r])
+                    {
+                        flag=1;
+                        break;
+                    }
+                }
+                if (flag==0)
+                {
+                    pass_score_prom[h++] = member_card[j].score;
+                }
+            }
+            count++;
+        }
+        for (int i_1 = 0; i_1 <h-1; i_1++)
+        {
+            for (int j_1=0; j_1<h-i_1-1; j_1++)
+            {
+                if (pass_score_prom[j_1] > pass_score_prom[j_1 + 1])
+                {
+                    temp = pass_score_prom[j_1];
+                    pass_score_prom[j_1] = pass_score_prom[j_1 + 1];
+                    pass_score_prom[j_1 + 1] = temp;
+                }
+            }
+        }
+
+        if (h <= numb_fin)
+        {
+            (*pass_score)[i] = pass_score_prom[0];
+        }
+        else
+        {
+            (*pass_score)[i]=pass_score_prom[h - numb_fin];
+        }
+        free(pass_score_prom);
+    }
+
+    for(int i=0; i<*unique_count; i++)
+    {
+        printf("%s %d\n", (matrix)[i], (*pass_score)[i]);
+    }
+}
+
+
+
+
+void create_finalists_matrix(STRUCTURE* member_card, int *quantity, char **matrix, char ****matrix_fin, int **pass_score, int numb_fin, int *unique_count, int *count_all_finalists)
+{
+    *count_all_finalists = 0;
+    *matrix_fin = (char***)malloc(*unique_count * sizeof(char**));
+    if (*matrix_fin == NULL)
+    {
+        printf("\n\nMemory allocation error.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i = 0; i < *unique_count; i++)
+    {
+        // Определить количество финалистов текущего раздела
+        int finalist_count = 0;
+        for (int j = 0; j < *quantity; j++)
+        {
+            if (strcmp(member_card[j].section, matrix[i]) == 0 && member_card[j].score >= (*pass_score)[i] && finalist_count < numb_fin)
+            {
+                finalist_count++;
+            }
+        }
+
+        // Выделить память для хранения имен финалистов текущего раздела.
+        (*matrix_fin)[i] = (char**)malloc((finalist_count + 1) * sizeof(char*));
+        if ((*matrix_fin)[i] == NULL)
+        {
+            printf("\n\nMemory allocation error.\n");
+            exit(EXIT_FAILURE);
+        }
+
+        // Заполнить массив именами финалистов текущего раздела.
+        int index = 0;
+        printf("\n%s\n", matrix[i]);
+        for (int j = 0; j < *quantity; j++)
+        {
+            if (strcmp(member_card[j].section, matrix[i]) == 0 && member_card[j].score >= (*pass_score)[i] && index < numb_fin)
+            {
+                (*matrix_fin)[i][index] = (char*)malloc((strlen(member_card[j].surname) + 1) * sizeof(char));
+                if ((*matrix_fin)[i][index] == NULL)
+                {
+                    printf("\n\nMemory allocation error.\n");
+                    exit(EXIT_FAILURE);
+                }
+                strcpy((*matrix_fin)[i][index], member_card[j].surname);
+                printf(" %s\n", (*matrix_fin)[i][index]);
+                index++;
+            }
+            else if (index >= numb_fin)
+            {
+                // Если мы достигли максимально допустимого числа финалистов, выходим из цикла.
+                break;
+            }
+        }
+        (*matrix_fin)[i][finalist_count] = NULL; // Установить для последнего элемента массива финалистов значение NULL.
+        *count_all_finalists += finalist_count; // Обновить общее количество финалистов
+    }
+}
+
+
+void calculate_city_count(STRUCTURE* member_card, int *quantity, char ***matrix_fin, int *unique_count, int *city_count)
+{
+    // Создаем массив для отслеживания уникальных городов, участвующих в финале
+    char **unique_cities=(char**)malloc((*unique_count) * sizeof(char*));
+    if (unique_cities == NULL)
+    {
+        printf("\n\nMemory allocation error.\n");
+        exit(EXIT_FAILURE);
+    }
+    int unique_city_count = 0;
+
+    // Проходим по каждой секции финалистов
+    for (int i = 0; i < *unique_count; i++)
+    {
+        // Проходим по каждому финалисту в текущей секции
+        for (int j = 0; matrix_fin[i][j] != NULL; j++)
+        {
+            // Получаем город финалиста
+            char *city = NULL;
+            for (int k = 0; k < *quantity; k++)
+            {
+                if (strcmp(member_card[k].surname, matrix_fin[i][j]) == 0)
+                {
+                    city = member_card[k].city;
+                    break;
+                }
+            }
+
+            // Проверяем, есть ли этот город уже в массиве уникальных городов
+            int found = 0;
+            for (int k = 0; k < unique_city_count; k++)
+            {
+                if (strcmp(unique_cities[k], city) == 0)
+                {
+                    found = 1;
+                    break;
+                }
+            }
+
+            // Если город не найден в массиве уникальных городов, добавляем его
+            if (found==0)
+            {
+                unique_cities[unique_city_count] = (char*)malloc((strlen(city) + 1) * sizeof(char));
+                if (unique_cities[unique_city_count] == NULL)
+                {
+                    printf("\n\nMemory allocation error.\n");
+                    exit(EXIT_FAILURE);
+                }
+                strcpy(unique_cities[unique_city_count], city);
+                unique_city_count++;
+            }
+        }
+    }
+
+    // Устанавливаем количество уникальных городов, участвующих в финале
+    *city_count = unique_city_count;
+    printf("%d", *city_count);
+
+    // Освобождаем память, выделенную под массив уникальных городов
+    for (int i = 0; i < unique_city_count; i++)
+    {
+        free(unique_cities[i]);
+    }
+    free(unique_cities);
+}
+
+int main()
+{
+    int quantity, unique_count, count_all_finalists, city_count, numb_fin, *pass_score;
+    char **matrix;
+    char ***matrix_fin;
+    STRUCTURE *member_card;
+    fill_struct(&member_card, &quantity);
+    //fill_struct_file(&member_card, &quantity);
+    scanf("%d", &numb_fin);
+    printf("\n");
+    //print_participants_array(member_card, &quantity);
+    create_unique_sections_array(member_card, &quantity, &matrix, &unique_count);
+    calculate_pass_score(member_card, &quantity, matrix, &pass_score, numb_fin, &unique_count);
+    create_finalists_matrix(member_card, &quantity, matrix, &matrix_fin, &pass_score, numb_fin, &unique_count, &count_all_finalists);
+    printf("\n");
+    calculate_city_count(member_card, &quantity, matrix_fin, &unique_count, &city_count);
+    printf("\n");
+    return 0;
+}

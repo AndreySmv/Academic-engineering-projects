@@ -1,0 +1,188 @@
+#include <stdio.h>
+
+void fill_matrix(int m, int n, int mtrx[m][n]) 
+{
+    int value;
+    for (int j = 0; j < n; j++)
+    {
+        if (j % 2 == 0) // Если номер столбца четный, начинаем с нижнего элемента
+        {
+            for (int i = m - 1; i >= 0; i--)
+            {
+                scanf("%d", &value);
+                mtrx[i][n - 1 - j] = value;
+            }
+        }
+        else // Если номер столбца нечетный, начинаем с верхнего элемента
+        {
+            for (int i = 0; i < m; i++)
+            {
+                scanf("%d", &value);
+                mtrx[i][n - 1 - j] = value;
+            }
+        }
+    }
+}
+
+void fill_matrix_2(int m, int n, int* mtrx) 
+{
+    int value;
+    for (int j = 0; j < n; j++) 
+    {
+        if (j % 2 == 0) // Если номер столбца четный, начинаем с нижнего элемента
+        {
+            for (int i = m - 1; i >= 0; i--)
+            {
+                scanf("%d", &value);
+                *(mtrx + i * n + (n - 1 - j)) = value;
+            }
+        }
+        else // Если номер столбца нечетный, начинаем с верхнего элемента
+        {
+            for (int i = 0; i < m; i++)
+            {
+                scanf("%d", &value);
+                *(mtrx + i * n + (n - 1 - j)) = value;
+            }
+        }
+    }
+}
+
+
+void find_min_values(int m, int n, int mtrx[m][n], int ar_min[m], int *min) 
+{
+    for (int i=0; i<m; i++) 
+    {
+        ar_min[i] = mtrx[i][0];
+        for (int j = 0; j < n; j++)
+            if (ar_min[i] > mtrx[i][j]) ar_min[i] = mtrx[i][j];
+    }
+
+    *min = ar_min[0];
+    for (int i = 0; i < m; i++)
+        if (*min > ar_min[i]) *min = ar_min[i];
+}
+
+void find_min_values_2(int m, int n, int* mtrx, int* ar_min, int *min) {
+    for (int i = 0; i < m; i++) {
+        *(ar_min + i) = *(mtrx + i * n);
+        for (int j = 0; j < n; j++)
+            if (*(ar_min + i) > *(mtrx + i * n + j)) *(ar_min + i) = *(mtrx + i * n + j);
+    }
+
+    *min = *ar_min;
+    for (int i = 0; i < m; i++)
+        if (*min > *(ar_min + i)) *min = *(ar_min + i);
+}
+
+void print_matrix(int m, int n, int mtrx[m][n]) 
+{
+    for (int i=0; i<m; i++) 
+    {
+        for (int j=0; j<n; j++)
+            printf("%3d", mtrx[i][j]);
+        printf("\n");
+    }
+}
+
+void print_matrix_2(int m, int n, int* mtrx) 
+{
+    for (int i=0; i<m; i++) 
+    {
+        for (int j=0; j<n; j++)
+            printf("%3d", *(mtrx+i*n+j));
+        printf("\n");
+    }
+}
+
+void print_min_indices_1(int m, int n, int mtrx[m][n]) 
+{
+    int min = mtrx[0][0], flag = 0;
+    // Сначала находим абсолютный минимум в матрице
+    for (int i = 0; i < m; i++) 
+    {
+        for (int j = 0; j < n; j++)
+        {
+            if (min > mtrx[i][j]) min = mtrx[i][j];
+        }
+    }
+
+    // Теперь печатаем индексы строк, содержащих минимум
+    for (int i = 0; i < m; i++) 
+    {
+        for (int j = 0; j < n; j++)
+        {
+            if (mtrx[i][j] == min) 
+            {
+                if(flag==0)
+                {
+                    printf("%d", i + 1);
+                    flag=1;
+                }
+                else
+                {
+                    printf(" %d", i + 1);
+                }
+                break; // Переходим к следующей строке после нахождения минимума
+            }
+        }
+    }
+    printf("\n");
+}
+
+void print_min_indices_2(int m, int n, int *mtrx) 
+{
+    int min = *mtrx, flag = 0;
+    // Сначала находим абсолютный минимум в матрице
+    for (int i = 0; i < m * n; i++) 
+    {
+        if (min > *(mtrx + i)) min = *(mtrx + i);
+    }
+
+    // Теперь печатаем индексы строк, содержащих минимум
+    for (int i = 0; i < m; i++) 
+    {
+        for (int j = 0; j < n; j++)
+        {
+            if (*(mtrx + i * n + j) == min) 
+            {
+                if(flag==0)
+                {
+                    printf("%d", i + 1);
+                    flag=1;
+                }
+                else
+                {
+                    printf(" %d", i + 1);
+                }
+                break; // Переходим к следующей строке после нахождения минимума
+            }
+        }
+    }
+    printf("\n");
+}
+
+int main() 
+{
+    int m, n, min;
+    scanf("%d %d", &m, &n);
+    int a[m][n], ar_min[m];
+    fill_matrix(m, n, a);
+    //find_min_values(m, n, a, ar_min, &min);
+    print_matrix(m, n, a);
+    printf("\n");
+    print_min_indices_1(m, n, a); // Changed to use print_min_indices_1
+    //printf("\n");
+    // адресеая арифметика
+    /*int a_2[m][n], ar2_min[m];
+    int* ptr_a_2 = (int*)a_2;
+    int* ptr_ar2_min=ar2_min;
+
+    fill_matrix_2(m, n, ptr_a_2);
+    //find_min_values_2(m, n, ptr_a_2, ptr_ar2_min, &min);
+    print_matrix_2(m, n, ptr_a_2);
+    printf("\n");
+    print_min_indices_2(m, n, ptr_a_2); // Changed to use print_min_indices_2*/
+
+    return 0;
+}
